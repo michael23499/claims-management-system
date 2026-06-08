@@ -1,0 +1,342 @@
+<section class="container">
+  <a class="back" routerLink="/" queryParamsHandling="preserve">
+    <app-icon name="arrow-left" /> Back to claims
+  </a>
+
+  @if (loading()) {
+    <div class="card claim-header" aria-hidden="true">
+      <div class="skeleton skel-line skel-line--title"></div>
+      <div class="skeleton skel-line skel-line--short"></div>
+    </div>
+    <div class="card damages-card" aria-hidden="true">
+      <div class="skeleton skel-line skel-line--head"></div>
+      <div class="skeleton skel-block"></div>
+    </div>
+  } @else if (failed() || !claim()) {
+    <div class="empty">
+      <app-icon name="alert" class="empty__icon" />
+      <p class="error">Claim not found.</p>
+    </div>
+  } @else {
+    @let c = claim()!;
+
+    <div class="card claim-header">
+      @if (editingClaim()) {
+        <form class="claim-form" [formGroup]="claimForm" (ngSubmit)="saveClaim()">
+          <div class="field">
+            <label for="claim-title">Title</label>
+            <input
+              id="claim-title"
+              type="text"
+              formControlName="title"
+              maxlength="120"
+            />
+          </div>
+          <div class="field">
+            <label for="claim-description">Description</label>
+            <textarea
+              id="claim-description"
+              formControlName="description"
+              rows="3"
+              maxlength="1000"
+            ></textarea>
+            <span
+              class="char-hint"
+              [class.char-hint--limit]="descriptionLength() >= 1000"
+            >
+              <span class="tnum">{{ descriptionLength() }} / 1000</span>
+              @if (descriptionLength() >= 1000) {
+                <span class="char-hint__msg" role="alert">Maximum length reached</span>
+              }
+            </span>
+          </div>
+          <div class="form-actions">
+            <button
+              type="button"
+              class="btn btn--secondary"
+              (click)="cancelEditClaim()"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="btn"
+              [disabled]="claimForm.invalid || !claimHasChanges()"
+            >
+              Save changes
+            </button>
+          </div>
+          @if (claimError()) {
+            <p class="error">{{ claimError() }}</p>
+          }
+        </form>
+      } @else {
+        <header class="claim-header__top">
+          <h1>{{ c.title }}</h1>
+          <app-status-badge [status]="c.status" />
+          <button type="button" class="btn-link" (click)="startEditClaim()">
+            <app-icon name="edit" /> Edit
+          </button>
+        </header>
+        <p class="claim-meta">
+          <span class="case-id">#{{ c.id.slice(-6) }}</span>
+          <span>{{ c.damages.length }} damage(s)</span>
+          <span class="tnum">{{ total() | currency: 'EUR' }} total</span>
+        </p>
+        @if (c.description) {
+          <p class="description">{{ c.description }}</p>
+        }
+      }
+
+      <div class="status-actions">
+        @if (availableTransitions().length > 0) {
+          <span class="muted">Change status:</span>
+          @for (next of availableTransitions(); track next) {
+            <button
+              type="button"
+              [class]="next === 'canceled' ? 'btn btn--danger' : 'btn btn--primary'"
+              (click)="changeStatus(next)"
+            >
+              {{ statusLabel(next) }}
+            </button>
+          }
+        } @else {
+          <span class="muted">This claim is {{ c.status }} — no further changes.</span>
+        }
+      </div>
+      @if (statusError()) {
+        <p class="error">{{ statusError() }}</p>
+      }
+    </div>
+
+    <div class="card damages-card">
+      <div class="damages-card__head">
+        <h2>Damages</h2>
+        <div class="total-pill">
+          <span class="total-pill__label">Total</span>
+          <span class="total-pill__amount">{{ total() | currency: 'EUR' }}</span>
+        </div>
+      </div>
+
+      @if (isPending()) {
+        <h3 class="form-title">{{ isEditing() ? 'Edit damage' : 'Add damage' }}</h3>
+        <form class="damage-form" [formGroup]="form" (ngSubmit)="saveDamage()">
+          <div class="field">
+            <label for="part">Part</label>
+            <input id="part" type="text" formControlName="part" maxlength="80" />
+            @if (form.controls.part.touched && form.controls.part.invalid) {
+              <span class="field-error">Part is required.</span>
+            }
+          </div>
+          <div class="field">
+            <label for="description">Description</label>
+            <input
+              id="description"
+              type="text"
+              formControlName="description"
+              maxlength="280"
+            />
+            @if (
+              form.controls.description.touched && form.controls.description.invalid
+            ) {
+              <span class="field-error">Description is required.</span>
+            }
+            <span
+              class="char-hint"
+              [class.char-hint--limit]="form.controls.description.value.length >= 280"
+            >
+              <span class="tnum">{{ form.controls.description.value.length }} / 280</span>
+              @if (form.controls.description.value.length >= 280) {
+                <span class="char-hint__msg" role="alert">Maximum length reached</span>
+              }
+            </span>
+          </div>
+
+          <div class="field field--wide">
+            <span class="field-label">Image</span>
+            <label
+              class="dropzone"
+              [class.dropzone--filled]="imagePreview()"
+              (dragover)="$event.preventDefault()"
+              (drop)="onDrop($event)"
+            >
+              <input
+                class="visually-hidden"
+                type="file"
+                accept="image/*"
+                (change)="onFileSelected($event)"
+              />
+              @if (imagePreview(); as preview) {
+                <img class="dropzone__preview" [src]="preview" alt="Damage preview" />
+                <span class="muted">Click or drop to replace</span>
+              } @else if (uploadingImage()) {
+                <span class="muted">Uploading…</span>
+              } @else {
+                <app-icon name="image" class="dropzone__icon" />
+                <span><strong>Click to upload</strong> or drag &amp; drop</span>
+                <span class="muted dropzone__sub">PNG or JPG, up to 5 MB</span>
+              }
+            </label>
+          </div>
+
+          <div class="field">
+            <label for="price">Price (€)</label>
+            <input
+              id="price"
+              type="number"
+              formControlName="price"
+              min="0"
+              step="0.01"
+              (focus)="$any($event.target).select()"
+            />
+            @if (form.controls.price.touched && form.controls.price.invalid) {
+              <span class="field-error">Price must be 0 or more.</span>
+            }
+          </div>
+          <div class="field">
+            <label for="score">Score (1-10)</label>
+            <input
+              id="score"
+              type="number"
+              formControlName="score"
+              min="1"
+              max="10"
+              step="1"
+              (focus)="$any($event.target).select()"
+            />
+            @if (form.controls.score.touched && form.controls.score.invalid) {
+              <span class="field-error">Score must be between 1 and 10.</span>
+            }
+          </div>
+          <div class="field">
+            <span class="field-label">Severity</span>
+            <div
+              class="segmented"
+              role="group"
+              aria-label="Severity"
+              [style.--seg-count]="severities.length"
+              [style.--seg-index]="severityIndex()"
+            >
+              <span class="segmented__indicator"></span>
+              @for (s of severities; track s) {
+                <button
+                  type="button"
+                  class="segmented__option"
+                  [class.segmented__option--active]="
+                    form.controls.severity.value === s
+                  "
+                  (click)="form.controls.severity.setValue(s)"
+                >
+                  {{ s }}
+                </button>
+              }
+            </div>
+          </div>
+
+          @if (form.controls.price.value > 0 || isEditing()) {
+            <p class="preview-total">
+              {{ isEditing() ? 'New total after changes' : 'New total if added' }}:
+              <strong>{{ previewTotal() | currency: 'EUR' }}</strong>
+            </p>
+          }
+
+          <div class="form-actions">
+            @if (isEditing()) {
+              <button type="button" class="btn btn--secondary" (click)="cancelEdit()">
+                Cancel
+              </button>
+            }
+            <button
+              type="submit"
+              class="btn"
+              [disabled]="form.invalid || saving() || !hasChanges()"
+            >
+              @if (!isEditing()) {
+                <app-icon name="plus" />
+              }
+              {{ saving() ? 'Saving…' : isEditing() ? 'Save changes' : 'Add damage' }}
+            </button>
+          </div>
+
+          @if (formError()) {
+            <p class="error">{{ formError() }}</p>
+          }
+        </form>
+      } @else {
+        <p class="muted">Damages can only be managed while the claim is pending.</p>
+      }
+
+      <div class="damages-list">
+        @if (c.damages.length === 0) {
+          <div class="empty">
+            <app-icon name="inbox" class="empty__icon" />
+            <p class="muted">No damages logged yet. Add the first one above.</p>
+          </div>
+        } @else {
+          <h3 class="damages-list__title">
+            Logged damages <span class="count tnum">{{ c.damages.length }}</span>
+          </h3>
+          <div class="table-wrap">
+            <table class="damages">
+              <thead>
+                <tr>
+                  <th>Image</th>
+                  <th>Part</th>
+                  <th>Description</th>
+                  <th>Severity</th>
+                  <th class="num">Score</th>
+                  <th class="num">Price</th>
+                  @if (isPending()) {
+                    <th><span class="visually-hidden">Actions</span></th>
+                  }
+                </tr>
+              </thead>
+              <tbody>
+                @for (damage of c.damages; track damage.id) {
+                  <tr>
+                    <td>
+                      <img class="thumb" [src]="damage.imageUrl" [alt]="damage.part" />
+                    </td>
+                    <td class="strong">
+                      <div class="cell cell--narrow">{{ damage.part }}</div>
+                    </td>
+                    <td>
+                      <div class="cell">{{ damage.description }}</div>
+                    </td>
+                    <td>
+                      <span class="badge badge--sev-{{ damage.severity }}">
+                        {{ damage.severity }}
+                      </span>
+                    </td>
+                    <td class="num">{{ damage.score }}</td>
+                    <td class="num strong">{{ damage.price | currency: 'EUR' }}</td>
+                    @if (isPending()) {
+                      <td class="actions">
+                        <div class="actions__group">
+                          <button
+                            type="button"
+                            class="btn-link"
+                            (click)="startEdit(damage)"
+                          >
+                            <app-icon name="edit" /> Edit
+                          </button>
+                          <button
+                            type="button"
+                            class="btn-link btn-link--danger"
+                            (click)="removeDamage(damage.id)"
+                          >
+                            <app-icon name="trash" /> Delete
+                          </button>
+                        </div>
+                      </td>
+                    }
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</section>

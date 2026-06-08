@@ -1,0 +1,42 @@
+@if (notifications.error(); as message) {
+  <div class="banner" role="alert">
+    <app-icon name="alert" />
+    <span>{{ message }}</span>
+    <button type="button" class="banner__dismiss" (click)="notifications.clear()">
+      Dismiss
+    </button>
+  </div>
+}
+
+<header class="app-header">
+  <div class="app-header__inner">
+    <a class="brand" routerLink="/" aria-label="Claims Management — home">
+      <span class="brand__mark" aria-hidden="true">
+        <span class="brand__dot"></span>
+      </span>
+      <span class="brand__text">
+        Claims<span class="brand__accent">.</span>
+      </span>
+    </a>
+
+    <button
+      type="button"
+      class="theme-toggle"
+      (click)="theme.toggle()"
+      [attr.aria-label]="
+        theme.theme() === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'
+      "
+      [attr.aria-pressed]="theme.theme() === 'dark'"
+    >
+      @if (theme.theme() === 'dark') {
+        <app-icon name="sun" />
+      } @else {
+        <app-icon name="moon" />
+      }
+    </button>
+  </div>
+</header>
+
+<main>
+  <router-outlet />
+</main>

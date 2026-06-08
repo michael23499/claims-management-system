@@ -1,0 +1,19 @@
+{
+  "name": "claims-management-system",
+  "version": "1.0.0",
+  "description": "Full-stack claims management system (NestJS + Angular + MongoDB) — Bdeo technical challenge.",
+  "private": true,
+  "scripts": {
+    "setup": "pnpm install && pnpm -C backend install && pnpm -C frontend install",
+    "db": "docker compose up -d",
+    "seed": "pnpm -C backend run seed",
+    "dev": "pnpm run db && concurrently -k -n API,WEB -c blue,magenta \"pnpm -C backend run start:dev\" \"wait-on tcp:127.0.0.1:3000 && pnpm -C frontend start\"",
+    "build": "pnpm -C backend run build && pnpm -C frontend run build",
+    "test": "pnpm -C backend test && pnpm -C frontend test",
+    "test:cov": "pnpm -C backend run test:cov && pnpm -C frontend run test:cov"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.0",
+    "wait-on": "^8.0.1"
+  }
+}

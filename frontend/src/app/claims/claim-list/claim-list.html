@@ -1,0 +1,157 @@
+<section class="container">
+  <header class="page-head">
+    <div>
+      <p class="overline">Visual claims management</p>
+      <h1>Claims</h1>
+      <p class="page-head__sub muted">
+        Open a claim to log its vehicle damages, total their repair cost, and move
+        it through review, finalization or cancellation.
+      </p>
+    </div>
+  </header>
+
+  <!-- KPI dashboard -->
+  <div class="kpis">
+    <div class="kpi card">
+      <span class="kpi__label overline">Total claims</span>
+      <span class="kpi__value tnum">{{ kpis().total }}</span>
+    </div>
+    <div class="kpi card">
+      <span class="kpi__label overline">
+        <span class="dot dot--pending"></span> Pending
+      </span>
+      <span class="kpi__value tnum">{{ kpis().pending }}</span>
+    </div>
+    <div class="kpi card">
+      <span class="kpi__label overline">
+        <span class="dot dot--in_review"></span> In review
+      </span>
+      <span class="kpi__value tnum">{{ kpis().inReview }}</span>
+    </div>
+    <div class="kpi card">
+      <span class="kpi__label overline">
+        <span class="dot dot--finalized"></span> Finalized
+      </span>
+      <span class="kpi__value tnum">{{ kpis().finalized }}</span>
+    </div>
+    <div class="kpi card">
+      <span class="kpi__label overline">
+        <span class="dot dot--canceled"></span> Canceled
+      </span>
+      <span class="kpi__value tnum">{{ kpis().canceled }}</span>
+    </div>
+    <div class="kpi card kpi--accent">
+      <span class="kpi__label overline">Value on page</span>
+      <span class="kpi__value tnum">{{ kpis().value | currency: 'EUR' }}</span>
+    </div>
+  </div>
+
+  <!-- New claim -->
+  <form class="new-claim card" [formGroup]="createForm" (ngSubmit)="create()">
+    <div class="field">
+      <label for="new-title">Title</label>
+      <input
+        id="new-title"
+        type="text"
+        formControlName="title"
+        placeholder="New claim title"
+        maxlength="120"
+      />
+    </div>
+    <div class="field">
+      <label for="new-description">Description</label>
+      <input
+        id="new-description"
+        type="text"
+        formControlName="description"
+        placeholder="Optional"
+        maxlength="1000"
+      />
+    </div>
+    <button
+      type="submit"
+      class="btn btn--primary"
+      [disabled]="createForm.invalid || creating()"
+    >
+      @if (!creating()) {
+        <app-icon name="plus" />
+      }
+      {{ creating() ? 'Creating…' : 'Create claim' }}
+    </button>
+  </form>
+  @if (createError()) {
+    <p class="error">{{ createError() }}</p>
+  }
+
+  @if (loading()) {
+    <ul class="claim-list" aria-hidden="true">
+      @for (i of [1, 2, 3, 4]; track i) {
+        <li>
+          <div class="claim-card card claim-card--skeleton">
+            <span class="skeleton skeleton__title"></span>
+            <span class="skeleton skeleton__badge"></span>
+            <span class="skeleton skeleton__total"></span>
+          </div>
+        </li>
+      }
+    </ul>
+  } @else if (failed()) {
+    <div class="empty">
+      <app-icon name="alert" class="empty__icon" />
+      <p class="error">Could not load claims. Is the backend running?</p>
+    </div>
+  } @else if (claims().length === 0) {
+    <div class="empty">
+      <app-icon name="inbox" class="empty__icon" />
+      <p class="muted">No claims yet. Create your first one above.</p>
+    </div>
+  } @else {
+    <ul class="claim-list">
+      @for (claim of claims(); track claim.id) {
+        <li>
+          <a
+            class="claim-card card"
+            [routerLink]="['/claims', claim.id]"
+            queryParamsHandling="preserve"
+          >
+            <span class="claim-card__main">
+              <span class="claim-card__title">{{ claim.title }}</span>
+              @if (claim.description) {
+                <span class="claim-card__desc muted">{{ claim.description }}</span>
+              }
+            </span>
+            <app-status-badge [status]="claim.status" />
+            <span class="claim-card__total tnum">
+              {{ claim.totalAmount | currency: 'EUR' }}
+            </span>
+            <span class="claim-card__chev" aria-hidden="true">→</span>
+          </a>
+        </li>
+      }
+    </ul>
+
+    @if (totalPages() > 1) {
+      <nav class="pagination" aria-label="Pagination">
+        <button
+          type="button"
+          class="btn btn--secondary"
+          [disabled]="page() === 1"
+          (click)="goToPage(page() - 1)"
+        >
+          <app-icon name="arrow-left" /> Previous
+        </button>
+        <span class="pagination__info tnum">
+          {{ page() }} / {{ totalPages() }}
+        </span>
+        <button
+          type="button"
+          class="btn btn--secondary"
+          [disabled]="page() === totalPages()"
+          (click)="goToPage(page() + 1)"
+        >
+          Next
+        </button>
+      </nav>
+    }
+  }
+</section>

@@ -1,0 +1,547 @@
+/* Global design system: tokens + base styles + reusable component classes.
+   Visual identity inspired by Bdeo: ink, broken-white, coral, Space Grotesk/Mono. */
+
+:root {
+  /* Surfaces & text (warm neutral scale) */
+  --color-bg: #fafafa;
+  --color-surface: #ffffff;
+  --color-surface-2: #f5f5f5;
+  --color-text: #1a1a1a;
+  --color-text-soft: #434343;
+  --color-muted: #757575;
+  --color-border: #ececec;
+  --color-border-strong: #d4d4d4;
+
+  /* Brand (Bdeo coral) */
+  --color-primary: #db705c;
+  --color-primary-hover: #c65a47;
+  --color-primary-soft: #fdf1ee;
+  --color-primary-contrast: #ffffff;
+
+  /* Ink (sober near-black — used for primary actions, Bdeo-style) */
+  --color-ink: #1a1a1a;
+  --color-ink-hover: #050505;
+  --color-ink-contrast: #ffffff;
+
+  /* Danger */
+  --color-danger: #d64545;
+  --color-danger-soft: #fdf0f0;
+  --color-danger-border: #f5c9c9;
+
+  /* Status colors (text / bg) */
+  --status-pending: #b06a2c;
+  --status-pending-bg: #fbf3e9;
+  --status-in_review: #2f6fb0;
+  --status-in_review-bg: #eaf2fa;
+  --status-finalized: #2f8f6b;
+  --status-finalized-bg: #e9f6f0;
+  --status-canceled: #757575;
+  --status-canceled-bg: #f0f0f0;
+
+  /* Severity */
+  --sev-low: #2f8f6b;
+  --sev-low-bg: #e9f6f0;
+  --sev-mid: #b06a2c;
+  --sev-mid-bg: #fbf3e9;
+  --sev-high: #d64545;
+  --sev-high-bg: #fdf0f0;
+
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+
+  /* Radii & shadows — Bdeo leans sharp (4px dominant) */
+  --radius-sm: 4px;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --radius-full: 999px;
+  --shadow-sm: 0 1px 2px rgba(26, 26, 26, 0.05);
+  --shadow: 0 1px 3px rgba(26, 26, 26, 0.07), 0 1px 2px rgba(26, 26, 26, 0.04);
+  --shadow-md: 0 6px 20px rgba(26, 26, 26, 0.08);
+  --shadow-lg: 0 16px 40px rgba(26, 26, 26, 0.12);
+
+  /* Typography */
+  --font-sans: 'Space Grotesk', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'Space Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+}
+
+:root[data-theme='dark'] {
+  --color-bg: #121212;
+  --color-surface: #1c1c1c;
+  --color-surface-2: #242424;
+  --color-text: #f5f5f5;
+  --color-text-soft: #cfcfcf;
+  --color-muted: #9a9a9a;
+  --color-border: #2e2e2e;
+  --color-border-strong: #3d3d3d;
+
+  --color-primary: #e6826f;
+  --color-primary-hover: #ef9583;
+  --color-primary-soft: #2a1d1a;
+
+  --color-ink: #f5f5f5;
+  --color-ink-hover: #ffffff;
+  --color-ink-contrast: #1a1a1a;
+
+  --color-danger: #e87070;
+  --color-danger-soft: #2a1818;
+  --color-danger-border: #4a2727;
+
+  --status-pending: #e0a567;
+  --status-pending-bg: #2a2114;
+  --status-in_review: #76a9dc;
+  --status-in_review-bg: #15212e;
+  --status-finalized: #6cc4a0;
+  --status-finalized-bg: #14241d;
+  --status-canceled: #9a9a9a;
+  --status-canceled-bg: #242424;
+
+  --sev-low: #6cc4a0;
+  --sev-low-bg: #14241d;
+  --sev-mid: #e0a567;
+  --sev-mid-bg: #2a2114;
+  --sev-high: #e87070;
+  --sev-high-bg: #2a1818;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.6);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--color-text-soft);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  color: var(--color-text);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+h1 {
+  font-size: 1.65rem;
+}
+h2 {
+  font-size: 1.2rem;
+}
+h3 {
+  font-size: 1rem;
+}
+
+/* Figures stay in the sans (cleaner € and digits than mono); just align them. */
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+.overline {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-muted);
+}
+
+/* --- Layout --- */
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4) var(--space-7);
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+
+/* --- Form controls --- */
+
+input,
+select,
+textarea {
+  font: inherit;
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+
+  &::placeholder {
+    color: var(--color-muted);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-primary-soft);
+  }
+}
+
+/* Tabular figures; native spinners hidden (they differ per browser). */
+input[type='number'] {
+  font-variant-numeric: tabular-nums;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 4.5rem;
+}
+
+input[type='file'] {
+  padding: 0.4rem;
+  cursor: pointer;
+}
+
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 2rem;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23757575' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.65rem center;
+}
+
+label,
+.field-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-text-soft);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.field-error {
+  font-size: 0.78rem;
+  color: var(--color-danger);
+}
+
+/* --- Buttons --- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.6rem 1.1rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: var(--color-ink);
+  color: var(--color-ink-contrast);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    transform 0.05s,
+    box-shadow 0.15s;
+
+  &:hover:not(:disabled) {
+    background: var(--color-ink-hover);
+  }
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  /* Coral, the brand CTA. */
+  &--primary {
+    background: var(--color-primary);
+    color: var(--color-primary-contrast);
+
+    &:hover:not(:disabled) {
+      background: var(--color-primary-hover);
+    }
+  }
+
+  &--secondary {
+    background: var(--color-surface);
+    color: var(--color-text-soft);
+    border-color: var(--color-border-strong);
+
+    &:hover:not(:disabled) {
+      background: var(--color-surface-2);
+      border-color: var(--color-muted);
+    }
+  }
+
+  &--danger {
+    background: var(--color-surface);
+    color: var(--color-danger);
+    border-color: var(--color-danger-border);
+
+    &:hover:not(:disabled) {
+      background: var(--color-danger-soft);
+    }
+  }
+}
+
+/* Segmented control (e.g. severity: low / mid / high) */
+.segmented {
+  position: relative;
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 3px;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+
+  // Sliding active-indicator (animates between options).
+  &__indicator {
+    position: absolute;
+    top: 3px;
+    bottom: 3px;
+    left: 3px;
+    width: calc((100% - 6px) / var(--seg-count, 1));
+    background: var(--color-surface);
+    border-radius: calc(var(--radius-sm) - 1px);
+    box-shadow: var(--shadow-sm);
+    transform: translateX(calc(var(--seg-index, 0) * 100%));
+    transition: transform 0.2s ease;
+  }
+
+  &__option {
+    position: relative;
+    z-index: 1;
+    flex: 1 1 0;
+    width: auto;
+    min-width: 4rem;
+    padding: 0.4rem 0.85rem;
+    border: none;
+    background: none;
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-transform: capitalize;
+    color: var(--color-muted);
+    cursor: pointer;
+    transition: color 0.15s;
+
+    &:hover {
+      color: var(--color-text);
+    }
+
+    &--active {
+      color: var(--color-primary);
+    }
+  }
+}
+
+/* Inline text button (table row actions) */
+.btn-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  width: auto;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-primary);
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &--danger {
+    color: var(--color-danger);
+  }
+}
+
+/* --- Status badge --- */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-full);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  background: var(--status-canceled-bg);
+
+  &::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  &--pending {
+    color: var(--status-pending);
+    background: var(--status-pending-bg);
+  }
+  &--in_review {
+    color: var(--status-in_review);
+    background: var(--status-in_review-bg);
+  }
+  &--finalized {
+    color: var(--status-finalized);
+    background: var(--status-finalized-bg);
+  }
+  &--canceled {
+    color: var(--status-canceled);
+    background: var(--status-canceled-bg);
+  }
+
+  /* Severity variants */
+  &--sev-low {
+    color: var(--sev-low);
+    background: var(--sev-low-bg);
+  }
+  &--sev-mid {
+    color: var(--sev-mid);
+    background: var(--sev-mid-bg);
+  }
+  &--sev-high {
+    color: var(--sev-high);
+    background: var(--sev-high-bg);
+  }
+}
+
+/* --- Skeletons (loading placeholders) --- */
+
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-surface-2);
+  border-radius: var(--radius-sm);
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.45),
+      transparent
+    );
+    animation: skeleton-shimmer 1.3s infinite;
+  }
+}
+
+:root[data-theme='dark'] .skeleton::after {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.06),
+    transparent
+  );
+}
+
+@keyframes skeleton-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton::after {
+    animation: none;
+  }
+}
+
+/* --- Utilities --- */
+
+.muted {
+  color: var(--color-muted);
+}
+
+.error {
+  color: var(--color-danger);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-7) 0;
+  text-align: center;
+
+  &__icon {
+    font-size: 2.5rem;
+    color: var(--color-border-strong);
+  }
+}

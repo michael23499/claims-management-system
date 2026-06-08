@@ -1,0 +1,253 @@
+[
+  {
+    "title": "Front-end collision — Toyota Corolla",
+    "description": "Low-speed collision against a concrete bollard in a parking lot. Awaiting damage assessment.",
+    "status": "pending",
+    "damages": [
+      {
+        "part": "Front bumper",
+        "description": "Cracked and partially detached on the left side after the impact.",
+        "imageUrl": "https://picsum.photos/seed/bumper/400/300",
+        "price": 320.5,
+        "score": 6,
+        "severity": "mid"
+      },
+      {
+        "part": "Hood",
+        "description": "Deep dent with paint damage near the latch; alignment affected.",
+        "imageUrl": "https://picsum.photos/seed/hood/400/300",
+        "price": 480,
+        "score": 7,
+        "severity": "high"
+      },
+      {
+        "part": "Left headlight",
+        "description": "Lens shattered, housing intact.",
+        "imageUrl": "https://picsum.photos/seed/headlight/400/300",
+        "price": 145.99,
+        "score": 4,
+        "severity": "low"
+      }
+    ]
+  },
+  {
+    "title": "Side impact — Volkswagen Golf",
+    "description": "Vehicle hit on the driver side at an intersection. Under review by the adjuster.",
+    "status": "in_review",
+    "damages": [
+      {
+        "part": "Driver door",
+        "description": "Large dent and scratched paint along the full length of the panel.",
+        "imageUrl": "https://picsum.photos/seed/door/400/300",
+        "price": 540,
+        "score": 8,
+        "severity": "high"
+      },
+      {
+        "part": "Side mirror",
+        "description": "Casing broken, mirror glass missing.",
+        "imageUrl": "https://picsum.photos/seed/mirror/400/300",
+        "price": 95,
+        "score": 3,
+        "severity": "mid"
+      }
+    ]
+  },
+  {
+    "title": "Rear-end collision — Ford Focus",
+    "description": "Rear-end collision while stopped at a traffic light. Tailgate, bumper and rear lights affected; structural inspection passed and the full repair was approved by the adjuster.",
+    "status": "finalized",
+    "damages": [
+      {
+        "part": "Rear bumper",
+        "description": "Crushed center section with damaged parking sensors.",
+        "imageUrl": "https://picsum.photos/seed/rearbumper/400/300",
+        "price": 610,
+        "score": 9,
+        "severity": "high"
+      },
+      {
+        "part": "Tailgate",
+        "description": "Misaligned and no longer closing flush with the body.",
+        "imageUrl": "https://picsum.photos/seed/tailgate/400/300",
+        "price": 380,
+        "score": 6,
+        "severity": "mid"
+      },
+      {
+        "part": "Rear light cluster",
+        "description": "Right cluster cracked, water ingress visible.",
+        "imageUrl": "https://picsum.photos/seed/rearlight/400/300",
+        "price": 120,
+        "score": 3,
+        "severity": "low"
+      }
+    ]
+  },
+  {
+    "title": "Windshield chip — Honda Civic",
+    "description": "Customer reported a windshield chip but withdrew the claim before inspection.",
+    "status": "canceled",
+    "damages": [
+      {
+        "part": "Windshield",
+        "description": "Small stone chip on the passenger side, no crack spreading.",
+        "imageUrl": "https://picsum.photos/seed/windshield/400/300",
+        "price": 90,
+        "score": 2,
+        "severity": "low"
+      }
+    ]
+  },
+  {
+    "title": "Hail damage — Nissan Qashqai",
+    "description": "Vehicle caught in a hailstorm while parked outdoors. Awaiting full assessment.",
+    "status": "pending",
+    "damages": [
+      {
+        "part": "Roof panel",
+        "description": "Multiple dents across the roof from hailstones.",
+        "imageUrl": "https://picsum.photos/seed/roof/400/300",
+        "price": 410,
+        "score": 5,
+        "severity": "mid"
+      },
+      {
+        "part": "Windshield",
+        "description": "Star crack on the driver side from a hail impact.",
+        "imageUrl": "https://picsum.photos/seed/hailglass/400/300",
+        "price": 230,
+        "score": 6,
+        "severity": "mid"
+      }
+    ]
+  },
+  {
+    "title": "Parking scrape — SEAT León",
+    "description": "Long scrape found after parking in a tight street spot.",
+    "status": "pending",
+    "damages": [
+      {
+        "part": "Rear quarter panel",
+        "description": "Long scrape with paint transfer along the rear panel.",
+        "imageUrl": "https://picsum.photos/seed/quarter/400/300",
+        "price": 275.75,
+        "score": 4,
+        "severity": "low"
+      }
+    ]
+  },
+  {
+    "title": "Flood damage — Renault Clio",
+    "description": "Cabin flooded after the car was caught in a flash flood. Electronics being checked.",
+    "status": "in_review",
+    "damages": [
+      {
+        "part": "Cabin carpeting",
+        "description": "Soaked interior carpeting after street flooding; mildew risk.",
+        "imageUrl": "https://picsum.photos/seed/carpet/400/300",
+        "price": 360,
+        "score": 6,
+        "severity": "mid"
+      },
+      {
+        "part": "Engine control unit",
+        "description": "ECU exposed to water, multiple electrical faults logged.",
+        "imageUrl": "https://picsum.photos/seed/ecu/400/300",
+        "price": 720,
+        "score": 9,
+        "severity": "high"
+      },
+      {
+        "part": "Door seals",
+        "description": "Rubber seals deteriorated, allowing water ingress.",
+        "imageUrl": "https://picsum.photos/seed/seals/400/300",
+        "price": 130,
+        "score": 3,
+        "severity": "low"
+      }
+    ]
+  },
+  {
+    "title": "Animal collision — Peugeot 3008",
+    "description": "Collision with a deer on a rural road at dusk. Under review.",
+    "status": "in_review",
+    "damages": [
+      {
+        "part": "Front grille",
+        "description": "Grille shattered after the collision.",
+        "imageUrl": "https://picsum.photos/seed/grille/400/300",
+        "price": 290,
+        "score": 6,
+        "severity": "mid"
+      },
+      {
+        "part": "Radiator",
+        "description": "Radiator punctured, coolant leaking.",
+        "imageUrl": "https://picsum.photos/seed/radiator/400/300",
+        "price": 540,
+        "score": 8,
+        "severity": "high"
+      }
+    ]
+  },
+  {
+    "title": "Multi-car pile-up — BMW Serie 1",
+    "description": "Three-car pile-up on the motorway. Both the front and rear ends were affected; the adjuster validated the structural report and approved the complete repair before closing the claim.",
+    "status": "finalized",
+    "damages": [
+      {
+        "part": "Front bumper",
+        "description": "Completely destroyed, fog lights missing.",
+        "imageUrl": "https://picsum.photos/seed/bmwfront/400/300",
+        "price": 650,
+        "score": 9,
+        "severity": "high"
+      },
+      {
+        "part": "Trunk lid",
+        "description": "Buckled and no longer latching.",
+        "imageUrl": "https://picsum.photos/seed/trunk/400/300",
+        "price": 420,
+        "score": 7,
+        "severity": "mid"
+      }
+    ]
+  },
+  {
+    "title": "Garage door impact — Audi A3",
+    "description": "The vehicle was scraped along the right side while exiting a garage with a partially open door; damage was limited to body panels and the repair was completed and signed off by the workshop.",
+    "status": "finalized",
+    "damages": [
+      {
+        "part": "Right side panels",
+        "description": "Deep gouges along both right doors, down to bare metal.",
+        "imageUrl": "https://picsum.photos/seed/audiside/400/300",
+        "price": 580,
+        "score": 8,
+        "severity": "high"
+      }
+    ]
+  },
+  {
+    "title": "Duplicate report — Mazda 3",
+    "description": "Claim opened by mistake; the incident was already filed under another reference, so this one was canceled.",
+    "status": "canceled",
+    "damages": []
+  },
+  {
+    "title": "Minor scuff — Kia Sportage",
+    "description": "Customer decided to handle a minor cosmetic scuff out of pocket and canceled the claim.",
+    "status": "canceled",
+    "damages": [
+      {
+        "part": "Front fender",
+        "description": "Light cosmetic scuff, no structural damage.",
+        "imageUrl": "https://picsum.photos/seed/fender/400/300",
+        "price": 70,
+        "score": 2,
+        "severity": "low"
+      }
+    ]
+  }
+]

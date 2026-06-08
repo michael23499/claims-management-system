@@ -1,0 +1,555 @@
+openapi: 3.0.3
+
+info:
+  title: Claims Management System API
+  description: REST API to manage insurance claims and their associated damages. Bdeo Full Stack technical challenge.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+
+tags:
+  - name: Claims
+    description: Create, list, read and update claims, plus portfolio-wide stats.
+  - name: Damages
+    description: Manage the damages embedded in a claim (only while it is pending).
+  - name: Uploads
+    description: Upload a damage image and get back its public path.
+
+# Endpoints are added here one at a time, as we implement them.
+paths:
+
+  /claims:
+    # Create a new claim (starts as pending, with no damages and total 0).
+    post:
+      summary: Create a claim
+      operationId: createClaim
+      tags:
+        - Claims
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClaimInput'
+      responses:
+        '201':
+          description: Claim created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Claim'
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    # List claims, paginated and newest first (Claim List view).
+    get:
+      summary: List claims (paginated)
+      operationId: listClaims
+      tags:
+        - Claims
+      parameters:
+        - name: page
+          in: query
+          required: false
+          description: 1-based page number.
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          required: false
+          description: Page size.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+      responses:
+        '200':
+          description: A page of claims (newest first).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedClaims'
+        '400':
+          description: Invalid pagination params.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /claims/stats:
+    # Portfolio-wide aggregates for the dashboard (whole collection, not a page).
+    get:
+      summary: Claim statistics across all claims
+      operationId: getClaimStats
+      tags:
+        - Claims
+      responses:
+        '200':
+          description: Aggregated counts per status and total value.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClaimStats'
+
+  /claims/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: Claim identifier.
+        schema:
+          type: string
+    # Get a single claim with its damages and computed total (Claim Detail view).
+    get:
+      summary: Get a claim by id
+      operationId: getClaim
+      tags:
+        - Claims
+      responses:
+        '200':
+          description: The requested claim.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Claim'
+        '404':
+          description: Claim not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    # Update title/description and/or change status (validated transitions).
+    patch:
+      summary: Update a claim
+      operationId: updateClaim
+      tags:
+        - Claims
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClaimUpdate'
+      responses:
+        '200':
+          description: Updated claim.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Claim'
+        '400':
+          description: Validation error or forbidden status transition.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Claim not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /claims/{id}/damages:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: Claim identifier.
+        schema:
+          type: string
+    # Add a damage to a claim (only while pending). Returns the updated claim
+    # with the recomputed total.
+    post:
+      summary: Add a damage to a claim
+      operationId: addDamage
+      tags:
+        - Damages
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DamageInput'
+      responses:
+        '201':
+          description: Damage added; returns the updated claim.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Claim'
+        '400':
+          description: Validation error or claim is not pending.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Claim not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /claims/{id}/damages/{damageId}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: Claim identifier.
+        schema:
+          type: string
+      - name: damageId
+        in: path
+        required: true
+        description: Damage identifier.
+        schema:
+          type: string
+    # Replace a damage (all fields required). Only while pending. Returns the
+    # updated claim with the recomputed total.
+    put:
+      summary: Replace a damage
+      operationId: updateDamage
+      tags:
+        - Damages
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DamageInput'
+      responses:
+        '200':
+          description: Damage replaced; returns the updated claim.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Claim'
+        '400':
+          description: Validation error or claim is not pending.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Claim or damage not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    # Remove a damage. Only while pending. Returns the updated claim with the
+    # recomputed total.
+    delete:
+      summary: Delete a damage
+      operationId: deleteDamage
+      tags:
+        - Damages
+      responses:
+        '200':
+          description: Damage deleted; returns the updated claim.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Claim'
+        '400':
+          description: Claim is not pending.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Claim or damage not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /uploads:
+    # Upload an image file and get back its public path. The frontend uses this
+    # to obtain the imageUrl before adding a damage.
+    post:
+      summary: Upload an image
+      operationId: uploadImage
+      tags:
+        - Uploads
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Image file (max 5 MB).
+      responses:
+        '201':
+          description: File stored; returns its public path.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadResult'
+        '400':
+          description: Missing file or the file is not an image.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+
+    # --- Enums ---
+
+    ClaimStatus:
+      type: string
+      enum:
+        - pending
+        - in_review
+        - finalized
+        - canceled
+
+    Severity:
+      type: string
+      enum:
+        - low
+        - mid
+        - high
+
+    # --- Damage ---
+    # Damages are embedded subdocuments inside a Claim (NoSQL modeling:
+    # atomic reads, consistent total). Each one keeps its own id.
+
+    Damage:
+      type: object
+      required:
+        - id
+        - part
+        - description
+        - imageUrl
+        - price
+        - score
+        - severity
+      properties:
+        id:
+          type: string
+          description: Unique damage identifier (Mongo ObjectId).
+          readOnly: true
+        part:
+          type: string
+          description: Which part was damaged (e.g. front door).
+          minLength: 1
+        description:
+          type: string
+          description: How it was damaged.
+          minLength: 1
+        imageUrl:
+          type: string
+          format: uri
+        price:
+          type: number
+          format: double
+          minimum: 0
+        score:
+          type: integer
+          description: Damage score from 1 to 10 (hidden field in the challenge PDF).
+          minimum: 1
+          maximum: 10
+        severity:
+          $ref: '#/components/schemas/Severity'
+
+    # Payload to add a damage (no id; the server generates it).
+    # All fields are required (INSTRUCTIONS 2.3).
+    DamageInput:
+      type: object
+      required:
+        - part
+        - description
+        - imageUrl
+        - price
+        - score
+        - severity
+      properties:
+        part:
+          type: string
+          minLength: 1
+          maxLength: 80
+        description:
+          type: string
+          minLength: 1
+          maxLength: 280
+        imageUrl:
+          type: string
+          format: uri
+        price:
+          type: number
+          format: double
+          minimum: 0
+        score:
+          type: integer
+          minimum: 1
+          maximum: 10
+        severity:
+          $ref: '#/components/schemas/Severity'
+
+    # --- Claim ---
+
+    Claim:
+      type: object
+      required:
+        - id
+        - title
+        - status
+        - totalAmount
+        - damages
+      properties:
+        id:
+          type: string
+          description: Unique claim identifier (Mongo ObjectId).
+          readOnly: true
+        title:
+          type: string
+          minLength: 1
+        description:
+          type: string
+          description: General claim description. Must be over 100 characters to finalize a claim that has any high-severity damage.
+        status:
+          $ref: '#/components/schemas/ClaimStatus'
+        totalAmount:
+          type: number
+          format: double
+          minimum: 0
+          description: Total computed on the server as the sum of the damage prices. Read-only.
+          readOnly: true
+        damages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Damage'
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+
+    # Payload to create a claim. status defaults to pending on the server;
+    # totalAmount and damages are server-managed.
+    ClaimInput:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 120
+        description:
+          type: string
+          maxLength: 1000
+
+    # Payload to update a claim. All fields optional; status transitions are
+    # validated by the server's business rules.
+    ClaimUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 120
+        description:
+          type: string
+          maxLength: 1000
+        status:
+          $ref: '#/components/schemas/ClaimStatus'
+
+    # A page of claims (response of GET /claims).
+    PaginatedClaims:
+      type: object
+      required:
+        - items
+        - total
+        - page
+        - limit
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Claim'
+        total:
+          type: integer
+          description: Total number of claims across all pages.
+        page:
+          type: integer
+        limit:
+          type: integer
+
+    # Portfolio-wide aggregates (response of GET /claims/stats).
+    ClaimStats:
+      type: object
+      required:
+        - total
+        - byStatus
+        - totalValue
+      properties:
+        total:
+          type: integer
+          description: Total number of claims across all statuses.
+        byStatus:
+          type: object
+          description: Count of claims per status.
+          properties:
+            pending:
+              type: integer
+            in_review:
+              type: integer
+            finalized:
+              type: integer
+            canceled:
+              type: integer
+        totalValue:
+          type: number
+          description: Sum of every claim's total amount (EUR).
+
+    # --- Uploads ---
+
+    UploadResult:
+      type: object
+      required:
+        - path
+      properties:
+        path:
+          type: string
+          description: Public path of the stored image, served statically under /uploads.
+
+    # --- Errors ---
+
+    Error:
+      type: object
+      required:
+        - statusCode
+        - message
+      properties:
+        statusCode:
+          type: integer
+        message:
+          oneOf:
+            - type: string
+            - type: array
+              items:
+                type: string
+        error:
+          type: string

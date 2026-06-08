@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build output
+dist/
+**/dist/
+build/
+
+# Test coverage
+coverage/
+**/coverage/
+
+# Uploaded files (runtime storage, not committed)
+backend/uploads/
+backend/test-uploads/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+
+# Claude Code (local config, memory, projects — not for the repo)
+.claude/
+**/.claude/
+
+*.pdf
+INSTRUCTIONS.md
+
